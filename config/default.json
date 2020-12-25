@@ -1,6 +1,6 @@
 {
     "dbConfig": {
-        "connString": "mongodb://localhost:27017/test"
+        "connString": "mongodb://localhost:27017/oask-api-2"
       },
       "paginator": {
         "limit": 3

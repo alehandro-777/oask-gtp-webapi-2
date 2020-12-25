@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
    profile:{ type: Schema.Types.ObjectId, ref: 'user_profiles' },
-   shopcart:{ type: Schema.Types.ObjectId, ref: 'shopcarts' },
+
    name: {
     type: String,
     required: true
