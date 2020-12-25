@@ -1,0 +1,8 @@
+{
+    "dbConfig": {
+        "connString": "mongodb://localhost:27017/test"
+      },
+      "paginator": {
+        "limit": 3
+      }      
+}
