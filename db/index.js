@@ -4,13 +4,20 @@ exports.create = (model) => {
     return model.save();    
 }
 
+exports.createMany = (Model, data) => {
+    return Model.insertMany(data);   
+}
+
 exports.upsert = (Model, query, newDoc) => {
     return Model.findOneAndUpdate(query, newDoc, {upsert: true})
 }
 
 exports.find = (Model, filter , projection, options) => {
-    console.log(filter)
     return Model.find(filter , projection, options);
+}
+
+exports.findOneAndUpdate = (Model, filter, update) => {
+    return Model.findOneAndUpdate(filter , update, {new:true, upsert:true});
 }
 
 exports.deleteOne = (Model, conditions ) => {
