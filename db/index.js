@@ -37,6 +37,6 @@ exports.findById = (Model, id ) => {
     return Model.findById(id);   
 }
 
-exports.findOne = (Model, conditions ) => {
-    return Model.findOne(conditions)   
+exports.findOne = (Model, conditions, projection, options ) => {
+    return Model.findOne(conditions, projection, options )   
 }

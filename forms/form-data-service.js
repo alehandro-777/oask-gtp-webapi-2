@@ -91,16 +91,43 @@ exports.update = (id, body) => {
 exports.findById = async (id) => {      
     let form_cfg = await db.findById(FormCfg, {"_id": id});
 
-    let point_cfg_filter = form_cfg.point_controls.map(id => { return {'_id':id }});
-    let point_ids_filter = form_cfg.point_controls.map(id => { return {'point_id':id }});
-
     //select point cfgs
-    let cfgs = await db.find(PointCfg, { $or: point_cfg_filter });
+    let cfgs = await db.find(PointCfg, { '_id' : {$in: form_cfg.point_controls} });
     let header = CreateTableHeaderFromPointsCfg(cfgs)
+
     //select values
-    let values = await db.find(PointValue, { $or: point_ids_filter }, null, {sort: {current_time: 1}})
+    let values = await db.find(PointValue, { 'point_id' : {$in: form_cfg.point_controls} }, null, {sort: {current_time: 1}})
+
     let rows = CreateRowsFromCells(values)
+
     return {header, rows};
+}
+
+exports.GetLastValuesVector = async (point_ids) => {
+    let promises = [];
+
+    for (let i = 0; i < point_ids.length; i++) {
+        const point_id = point_ids[i];
+        //select last values
+        let promise = db.findOne(PointValue, { 'point_id' : point_id }, {}, { sort: { current_time: -1 } });
+        promises.push(promise);
+    }
+
+    let values = await Promise.all(promises);
+
+     return values.reduce((acc, curr)=>{
+        if(curr) acc[curr.point_id] = curr.str_value;
+        return acc;
+    }, {}) 
+}
+
+async function GetValuesVector(point_ids, time) {
+     //select values on time
+     let values = await db.find(PointValue, { 'point_id' : {$in: point_ids}, 'current_time' : time });
+     return values.reduce((acc, curr)=>{
+        acc[curr.point_id] = curr.str_value;
+        return acc;
+    }, {}) 
 }
 
 function CreateTableHeaderFromPointsCfg(cfgs) {

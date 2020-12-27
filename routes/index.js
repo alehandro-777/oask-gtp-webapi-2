@@ -8,6 +8,7 @@ const form_control_controller = require('../forms/control/form-control-controlle
 const cfgpoints_controller = require('../points/point-cfg/point-cfg-controller')
 const values_controller = require('../points/point-values/point-values-controller')
 const transactions_controller = require('../points/point-transactions/point-transactions-controller')
+const menu_controller = require('../menu/forms_menu/form-menu-controller')
 
 const router = express.Router()
 const authorize = require('./auth')
@@ -73,6 +74,12 @@ router.get('/transactions',       transactions_controller.select )
 router.delete('/transactions/:id', transactions_controller.delete )
 router.patch('/transactions/:id',    transactions_controller.update )
 router.get('/transactions/:id',    transactions_controller.findOne )
+
+router.post('/menu',      menu_controller.create )
+router.get('/menu',       menu_controller.select )
+router.delete('/menu/:id', menu_controller.delete )
+router.patch('/menu/:id',    menu_controller.update )
+router.get('/menu/:id',    menu_controller.findOne )
 
 
 module.exports =  router 

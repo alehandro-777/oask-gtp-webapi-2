@@ -2,6 +2,8 @@ const db = require('../db');
 const FormCfg = require('./form-cfg-model');
 const base = require('../shared')
 const PointCfg = require('../points/point-cfg/point-cfg.model')
+const FormDataService = require('./form-data-service')
+
 
 exports.create = (body) => {
       
@@ -34,7 +36,10 @@ exports.findById = async (id) => {
     let form = await db.findById(FormCfg, {"_id": id});
     result["title"] = form.title;
     let point_cfgs = await AsyncPopulateControls(form);
-    result["controls"] = InitControls(point_cfgs);
+
+    let values = await FormDataService.GetLastValuesVector(form.point_controls);
+
+    result["controls"] = InitControls(point_cfgs, values);
     return result;
 }
 
@@ -49,7 +54,7 @@ function AsyncPopulateControls(form) {
     return Promise.all(promises);
 }
 
-function InitControls(point_cfgs) {
+function InitControls(point_cfgs, values) {
     let result = [];
     for (let i = 0; i < point_cfgs.length; i++) {
         let point_cfg  = point_cfgs[i];
@@ -58,6 +63,7 @@ function InitControls(point_cfgs) {
         control.name = point_cfg._id;
         control.label = point_cfg.name;
         control.id = point_cfg._id;
+        if (values[point_cfg._id]) control.value = values[point_cfg._id];
         result.push(control);
     }
 
