@@ -9,6 +9,8 @@ const errorHandler = require('./routes/error-handler')
 const port = process.env.PORT || 3000;
 const connString = config.get('dbConfig.connString');
 
+const test = require('./generate-test-data')
+
 
 const connParams = {useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false };
 
@@ -22,6 +24,7 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.once('open', () => { 
     console.log('Mongobd connected Ok')
+    mongoose.connection.db.dropDatabase();
 }); 
 
 process.on('exit', ()=>{
@@ -59,6 +62,8 @@ app.use('/images', express.static(__dirname + '/images'));
 app.use(errorHandler);
 
 //console.log(process.env.PORT)
+
+test.GenerateTestData()
 
 console.log(`Server started at port: ${port}`)
 app.listen(port)

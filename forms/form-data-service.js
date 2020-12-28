@@ -12,7 +12,7 @@ exports.create = async (body) => {
     const user = await db.findOne(User);    
     const trans = await db.create(new Transaction({user:user._id, data:body}));
 
-    const values = Decode(body, trans._id);
+    const values = DecodeInputsToValuesList(body, trans._id);
     const promises = [];
 
     for (let i = 0; i < values.length; i++) {
@@ -31,7 +31,7 @@ function  UpsertValue(new_value, transaction_id) {
         {...new_value, transaction_id});
 }
 
-function Decode(form_data) {
+function DecodeInputsToValuesList(form_data) {
     let values =[];
     let current_time;
     let num_value;
@@ -40,22 +40,43 @@ function Decode(form_data) {
     
         //date
         if (form_data["1"]) {
-            current_time = new Date(form_data["1"]);
-            str_current_time = form_data["1"];
-
+            current_time = new Date(form_data["1"]);    //set date
+            str_current_time = current_time.toDateString()
             delete form_data["1"];  
         }
         //time
         if (form_data["2"]) {
-
+            let time = new Date(form_data["2"]);    //set time
+            str_current_time = str_current_time + time.toString('hh:mm')
             delete form_data["2"]; 
         }
         //date-time local
         if (form_data["3"]) {
-
-
+            current_time = new Date(form_data["3"]);    //set date
+            str_current_time = form_data["3"];
             delete form_data["3"]; 
         }
+        //month
+        if (form_data["4"]) {
+
+
+            delete form_data["4"]; 
+        }
+        //add hours
+        if (form_data["5"]) {
+            let hour = form_data["5"];
+            current_time.setTime(current_time.getTime() + (hour*60*60*1000));
+            str_current_time = current_time.toISOString()
+            delete form_data["5"]; 
+        }
+        //add hour
+        if (form_data["6"]) {
+            let hour = form_data["6"];
+            current_time.setTime(current_time.getTime() + (hour*60*60*1000));
+            str_current_time = current_time.toISOString()
+            delete form_data["6"]; 
+        }
+
 
 
     for (const point_id in form_data) {
@@ -63,7 +84,9 @@ function Decode(form_data) {
         str_value = form_data[point_id];
         num_value = parseFloat(str_value);
 
+        //TODO str_value for digital objects !!!
         let value = {point_id, current_time, num_value, str_value, str_current_time};
+
         values.push(value);
     }
     return values;
@@ -103,6 +126,8 @@ exports.findById = async (id) => {
     return {header, rows};
 }
 
+
+//for create new form initial values
 exports.GetLastValuesVector = async (point_ids) => {
     let promises = [];
 
@@ -115,19 +140,57 @@ exports.GetLastValuesVector = async (point_ids) => {
 
     let values = await Promise.all(promises);
 
-     return values.reduce((acc, curr)=>{
+    let res_object = values.reduce((acc, curr)=>{
         if(curr) acc[curr.point_id] = curr.str_value;
         return acc;
     }, {}) 
-}
 
-async function GetValuesVector(point_ids, time) {
+    let time = new Date();
+
+    AddValuesForDateTimeControls(point_ids, res_object, time);
+    return res_object;
+}
+//for edit forms initial values
+exports.GetValuesVector = async function GetValuesVector(point_ids, time) {
      //select values on time
      let values = await db.find(PointValue, { 'point_id' : {$in: point_ids}, 'current_time' : time });
-     return values.reduce((acc, curr)=>{
+     let res_object = values.reduce((acc, curr)=>{
         acc[curr.point_id] = curr.str_value;
         return acc;
-    }, {}) 
+    }, {});
+
+    AddValuesForDateTimeControls(point_ids, res_object, new Date(time))
+    return res_object;
+}
+
+function AddValuesForDateTimeControls(point_ids, res_object, time) {
+            //date
+            if (point_ids.includes(1)) {
+                res_object['1'] = time.toDateString();
+            }
+            //time
+            if (point_ids.includes(2)) {
+                res_object['2'] = 0;
+            }
+            //date-time local
+            if (point_ids.includes(3)) {
+                res_object['3'] = 0;
+            }
+            //month
+            if (point_ids.includes(4)) {
+                res_object['4'] = 0;
+            }
+            //add hours
+            if (point_ids.includes(5)) {
+                res_object['5'] = 0;
+                res_object['5'] = time.getHours();
+            }
+            //add hour
+            if (point_ids.includes(6)) {
+                res_object['6'] = 0;
+                res_object['6'] = time.getHours();
+            }
+
 }
 
 function CreateTableHeaderFromPointsCfg(cfgs) {

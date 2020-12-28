@@ -30,14 +30,22 @@ exports.update = (id, body) => {
     return db.update(FormCfg, {"_id": id}, new_Product);
 }
 
-exports.findById = async (id) => { 
+exports.findById = async (id, query) => { 
     let result = {};
 
     let form = await db.findById(FormCfg, {"_id": id});
     result["title"] = form.title;
     let point_cfgs = await AsyncPopulateControls(form);
+    
+    let values;
 
-    let values = await FormDataService.GetLastValuesVector(form.point_controls);
+    //edit time slice or new values
+    if (query.current_time) {
+        values = await FormDataService.GetValuesVector(form.point_controls, query.current_time);
+    }
+    else {
+        values = await FormDataService.GetLastValuesVector(form.point_controls);      
+    }
 
     result["controls"] = InitControls(point_cfgs, values);
     return result;
@@ -63,6 +71,11 @@ function InitControls(point_cfgs, values) {
         control.name = point_cfg._id;
         control.label = point_cfg.name;
         control.id = point_cfg._id;
+
+        if (point_cfg.min) control.min =  point_cfg.min;
+        if (point_cfg.max) control.max =  point_cfg.max;
+        if (point_cfg.min) control.value =  point_cfg.min;
+
         if (values[point_cfg._id]) control.value = values[point_cfg._id];
         result.push(control);
     }

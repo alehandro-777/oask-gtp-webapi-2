@@ -51,7 +51,7 @@ exports.update = (req, res) => {
     );    
 }
 exports.findOne = (req, res) => {  
-    services.findById(req.params.id)    
+    services.findById(req.params.id, req.query)    
     .then( (result) => {
         if (result) {
             res.send(result);    
