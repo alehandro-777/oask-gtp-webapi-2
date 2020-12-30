@@ -3,6 +3,7 @@
         "connString": "mongodb+srv://mongo_masterkey123:2hRgv56G8ZygFfc@cluster0.cfjsw.mongodb.net/testdb-1?retryWrites=true&w=majority"
       },
       "paginator": {
-        "limit": 10
+        "limit": 10,
+        "form_data_limit": 30
       }     
 }

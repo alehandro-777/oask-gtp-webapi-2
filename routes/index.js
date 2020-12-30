@@ -49,7 +49,7 @@ router.post('/formvalues',      form_data_controller.create )
 router.get('/formvalues',       form_data_controller.select )
 router.delete('/formvalues/:id', form_data_controller.delete )
 router.patch('/formvalues/:id',    form_data_controller.update )
-router.get('/formvalues/:id',    form_data_controller.findOne )
+router.get('/formvalues/:id',    form_data_controller.getPageDataValuesForForm )
 
 router.post('/formcontrols',      form_control_controller.create )
 router.get('/formcontrols',       form_control_controller.select )

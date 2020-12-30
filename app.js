@@ -24,7 +24,8 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.once('open', () => { 
     console.log('Mongobd connected Ok')
-    mongoose.connection.db.dropDatabase();
+    //DELETE DATABASE FOR TESTS !!!!!!!!!!!!!!!
+    //mongoose.connection.db.dropDatabase();
 }); 
 
 process.on('exit', ()=>{
@@ -63,7 +64,7 @@ app.use(errorHandler);
 
 //console.log(process.env.PORT)
 
-test.GenerateTestData()
+//test.GenerateTestData()
 
 console.log(`Server started at port: ${port}`)
 app.listen(port)

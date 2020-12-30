@@ -6,7 +6,8 @@ const PointValue = require('../points/point-values/point-value-model')
 const Transaction = require('../points/point-transactions/point-transaction-model')
 const User = require('../user/user-model');
 const FormCfg = require('../forms/form-cfg-model')
-
+const config = require('config');
+const moment = require('moment'); // require
 
 exports.create = async (body) => {
     const user = await db.findOne(User);    
@@ -41,7 +42,8 @@ function DecodeInputsToValuesList(form_data) {
         //date
         if (form_data["1"]) {
             current_time = new Date(form_data["1"]);    //set date
-            str_current_time = current_time.toDateString()
+            str_current_time = moment(current_time).format('YYYY-MM-DD');
+            console.log(str_current_time)
             delete form_data["1"];  
         }
         //time
@@ -111,19 +113,51 @@ exports.update = (id, body) => {
     return db.update(FormValue, {"_id": id}, new_Product);
 }
 
-exports.findById = async (id) => {      
+function createLinkHeader(page, per_page, count) {
+    const header = {}
+    header.page = parseInt(page) || 1;
+    header.per_page = per_page;
+    header.prev = (header.page > 1) ? header.page-1 : null;
+    header.next = (header.per_page*header.page < count) ? header.page + 1 : null;
+    header.last = Math.ceil(count / header.per_page);
+    header.total_count = count;
+    return header;
+}
+
+//MAIN function select data table  for form id (support pagination !!! )
+exports.getPageDataValuesForForm = async (id, query) => { 
+
+    const per_page_default = config.get('paginator.limit');
+    const {page, per_page, sort, ...filter} = query;
+
+    //select form confiruration     
     let form_cfg = await db.findById(FormCfg, {"_id": id});
 
-    //select point cfgs
+    //select config for form points
     let cfgs = await db.find(PointCfg, { '_id' : {$in: form_cfg.point_controls} });
+
+    //create header for gui table
     let header = CreateTableHeaderFromPointsCfg(cfgs)
 
-    //select values
-    let values = await db.find(PointValue, { 'point_id' : {$in: form_cfg.point_controls} }, null, {sort: {current_time: 1}})
+    //get total rows for paginator
+    let total = await db.count(PointValue, { 'point_id' : {$in: form_cfg.point_controls} })
 
-    let rows = CreateRowsFromCells(values)
+    //create select page options
+    let options ={}
+    options.limit = parseInt(per_page) || per_page_default*form_cfg.point_controls.length;
+    options.skip = (parseInt(page) -1)*options.limit || 0;
+    options.sort = {current_time: -1}
+        
+    //select arr value for form points 
+    let values = await db.find(PointValue, { 'point_id' : {$in: form_cfg.point_controls} }, null, options)
 
-    return {header, rows};
+    //build rows from cells
+    let rows = CreateRowsFromCells(values, form_cfg.point_controls)
+
+    //for paginator
+    let link = createLinkHeader(page, options.limit, total)
+
+    return {header, rows, link};
 }
 
 
@@ -146,27 +180,33 @@ exports.GetLastValuesVector = async (point_ids) => {
     }, {}) 
 
     let time = new Date();
+    
+    console.log(time)
 
-    AddValuesForDateTimeControls(point_ids, res_object, time);
+    Add_DateTime_to_row_Object(point_ids, res_object, time);
     return res_object;
 }
 //for edit forms initial values
 exports.GetValuesVector = async function GetValuesVector(point_ids, time) {
+    let shift = new Date(time)
+    let new_time =  new Date(shift.getTime()-shift.getTimezoneOffset()*60*1000)
+
      //select values on time
-     let values = await db.find(PointValue, { 'point_id' : {$in: point_ids}, 'current_time' : time });
+     let values = await db.find(PointValue, { 'point_id' : {$in: point_ids}, 'current_time' : new_time.toISOString() });
+
      let res_object = values.reduce((acc, curr)=>{
         acc[curr.point_id] = curr.str_value;
         return acc;
     }, {});
 
-    AddValuesForDateTimeControls(point_ids, res_object, new Date(time))
+    Add_DateTime_to_row_Object(point_ids, res_object, new Date(time))
     return res_object;
 }
-
-function AddValuesForDateTimeControls(point_ids, res_object, time) {
+//добавляет вычисляемые служебные поля дата-время к объекту "строка"
+function Add_DateTime_to_row_Object(point_ids, res_object, time) {
             //date
             if (point_ids.includes(1)) {
-                res_object['1'] = time.toDateString();
+                res_object['1'] = moment(time).format('YYYY-MM-DD');
             }
             //time
             if (point_ids.includes(2)) {
@@ -201,7 +241,7 @@ function CreateTableHeaderFromPointsCfg(cfgs) {
 }
 
 
-function CreateRowsFromCells(values) {
+function CreateRowsFromCells(values, point_ids) {
     let current_time = new Date();
     let result = [];
     let obj;
@@ -210,13 +250,19 @@ function CreateRowsFromCells(values) {
         const value = values[i];
 
         if (current_time.getTime() !== value.current_time.getTime()) {
-            if (obj) result.push(obj);
+            if (obj) result.push(obj);            
+            //new row
             current_time = value.current_time;
-            obj = {"1" : value.str_current_time};
+            obj = {};
+        
+            //add date fime values        
+            Add_DateTime_to_row_Object(point_ids, obj, new Date(current_time.getTime()+current_time.getTimezoneOffset()*60*1000))
         }
+  
         obj[value.point_id] = value.str_value;
     }
     //push last row
     if (obj) result.push(obj);
     return result;
 }
+

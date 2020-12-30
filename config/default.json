@@ -3,6 +3,6 @@
         "connString": "mongodb://localhost:27017/oask-api-2"
       },
       "paginator": {
-        "limit": 3
+        "limit": 24
       }      
 }

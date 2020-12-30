@@ -4,12 +4,14 @@ const User = require('./user/user-model')
 const DbPoint = require('./points/point-cfg/point-cfg.model')
 const Form = require('./forms/form-cfg-model')
 const Control = require('./forms/control/form-control.model')
+const Menu = require('./menu/forms_menu/forms-menu-model')
 
 exports.GenerateTestData = () => {
     GenerateTestUsers()
     GenerateTestControls() 
     GenerateTestPoints()
     GenerateTestForms()
+    GenerateTestMenu()
 }
 
 function GenerateTestUsers() {
@@ -325,4 +327,46 @@ function GenerateTestForms() {
 
     ]
     db.createMany(Form, forms)
+}
+
+function GenerateTestMenu() {
+    let menus = [  
+    {
+        _id :  "1",            // unique id
+        name: "Мринське ВУПЗГ",
+        full_name: "Мринське ВУПЗГ",
+        payload: {},
+        children: [ "1.1" ],
+    },
+    {
+        _id :  "1.1",            // unique id
+        name: "ПСГ Червоні партизани",
+        full_name: "Мринське ВУПЗГ.ПСГ Червоні партизани",
+        payload: {},
+        children: [ "1.1.1", "1.1.2", "1.1.3"],
+    },
+    {
+        _id :  "1.1.1",            // unique id
+        name: "КС Бобровницька-05",
+        full_name: "Мринське ВУПЗГ.ПСГ Червоні партизани.КС Бобровницька-05",
+        payload: {"_id":1},
+        children: [],
+    },
+    {
+        _id :  "1.1.2",            // unique id
+        name: "ДКС Мрин",
+        full_name: "Мринське ВУПЗГ.ПСГ Червоні партизани.ДКС Мрин",
+        payload: {"_id":2},
+        children: [],
+    },
+    {
+        _id :  "1.1.3",            // unique id
+        name: "ПСГ",
+        full_name: "Мринське ВУПЗГ.ПСГ Червоні партизани.ПСГ",
+        payload: {"_id":4},
+        children: [],
+    },
+
+    ]
+    db.createMany(Menu, menus)
 }

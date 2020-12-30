@@ -50,8 +50,8 @@ exports.update = (req, res) => {
         }   
     );    
 }
-exports.findOne = (req, res) => {  
-    services.findById(req.params.id)    
+exports.getPageDataValuesForForm = (req, res) => {  
+    services.getPageDataValuesForForm(req.params.id, req.query)    
     .then( (result) => {
         if (result) {
             res.send(result);    
