@@ -10,10 +10,11 @@ const config = require('config');
 const moment = require('moment'); // require
 
 exports.create = async (body) => {
+
     const user = await db.findOne(User);    
     const trans = await db.create(new Transaction({user:user._id, data:body}));
 
-    const values = DecodeInputsToValuesList(body, trans._id);
+    const values = await DecodeFormKVPtoPointValuesList(body, trans._id);
     const promises = [];
 
     for (let i = 0; i < values.length; i++) {
@@ -32,7 +33,7 @@ function  UpsertValue(new_value, transaction_id) {
         {...new_value, transaction_id});
 }
 
-function DecodeInputsToValuesList(form_data) {
+async function DecodeFormKVPtoPointValuesList(form_data) {
     let values =[];
     let current_time;
     let num_value;
@@ -83,15 +84,29 @@ function DecodeInputsToValuesList(form_data) {
 
     for (const point_id in form_data) {
 
-        str_value = form_data[point_id];
-        num_value = parseFloat(str_value);
+        let value = await CreatePointValue(point_id, form_data[point_id]);      
 
-        //TODO str_value for digital objects !!!
-        let value = {point_id, current_time, num_value, str_value, str_current_time};
-
-        values.push(value);
+        values.push( {...value, current_time, str_current_time} );
     }
     return values;
+}
+
+//digital or analog values
+async function CreatePointValue(point_id, value){
+    let result = {};
+    result.point_id =point_id;
+    result.str_value = value;
+    //select config for point
+    let point_cfg = await db.findById(PointCfg, point_id).populate('control_id');
+    let control = point_cfg.control_id;
+
+    //has digital state
+    if (control.options.length > 0) {
+        let state = control.options.find(element => element.key == value);
+        if (state) result.str_value = state.value;
+    }
+    result.num_value = parseFloat(value);
+    return result;
 }
 
 
@@ -173,9 +188,10 @@ exports.GetLastValuesVector = async (point_ids) => {
     }
 
     let values = await Promise.all(promises);
-
+    
+    //move values in one big object
     let res_object = values.reduce((acc, curr)=>{
-        if(curr) acc[curr.point_id] = curr.str_value;
+        if(curr) acc[curr.point_id] = curr.num_value;
         return acc;
     }, {}) 
 
@@ -195,7 +211,7 @@ exports.GetValuesVector = async function GetValuesVector(point_ids, time) {
      let values = await db.find(PointValue, { 'point_id' : {$in: point_ids}, 'current_time' : new_time.toISOString() });
 
      let res_object = values.reduce((acc, curr)=>{
-        acc[curr.point_id] = curr.str_value;
+        acc[curr.point_id] = curr.num_value;
         return acc;
     }, {});
 
