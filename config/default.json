@@ -1,7 +1,7 @@
 {
     "dbConfig": {
-        "connString1": "mongodb://localhost:27017/oask-api-2",
-        "connString": "mongodb+srv://mongo_masterkey123:2hRgv56G8ZygFfc@cluster0.cfjsw.mongodb.net/oask-gtp-data-prep-module?retryWrites=true&w=majority"
+        "connString": "mongodb://localhost:27017/oask-api-2",
+        "connString1": "mongodb+srv://mongo_masterkey123:2hRgv56G8ZygFfc@cluster0.cfjsw.mongodb.net/oask-gtp-data-prep-module?retryWrites=true&w=majority"
 
       },
       "paginator": {

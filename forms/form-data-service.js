@@ -157,9 +157,12 @@ exports.getPageDataValuesForForm = async (id, query) => {
     //get total rows for paginator
     let total = await db.count(PointValue, { 'point_id' : {$in: form_cfg.point_controls} })
 
+    //determine page size count without types 1-6
+    let db_points = form_cfg.point_controls.filter(e=>e >6)
+
     //create select page options
     let options ={}
-    options.limit = parseInt(per_page) || per_page_default*form_cfg.point_controls.length;
+    options.limit = parseInt(per_page) || per_page_default*db_points.length;
     options.skip = (parseInt(page) -1)*options.limit || 0;
     options.sort = {current_time: -1}
         
@@ -172,7 +175,7 @@ exports.getPageDataValuesForForm = async (id, query) => {
     //for paginator
     let link = createLinkHeader(page, options.limit, total)
 
-    return {header, rows, link};
+    return {'title': form_cfg.title, header, rows, link};
 }
 
 
@@ -219,6 +222,7 @@ exports.GetValuesVector = async function GetValuesVector(point_ids, time) {
     return res_object;
 }
 //добавляет вычисляемые служебные поля дата-время к объекту "строка"
+
 function Add_DateTime_to_row_Object(point_ids, res_object, time) {
             //date
             if (point_ids.includes(1)) {
@@ -239,12 +243,12 @@ function Add_DateTime_to_row_Object(point_ids, res_object, time) {
             //add hours
             if (point_ids.includes(5)) {
                 res_object['5'] = 0;
-                res_object['5'] = time.getHours();
+                res_object['5'] =  time.getHours();
             }
             //add hour
             if (point_ids.includes(6)) {
                 res_object['6'] = 0;
-                res_object['6'] = time.getHours();
+                res_object['6'] =  time.getHours();
             }
 
 }
