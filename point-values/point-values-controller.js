@@ -2,7 +2,7 @@ const service = require('./point-values-service')
 
 exports.select = (req, res) => {  
     
-    service.select(req.params.id, req.query)    
+    service.select(+req.params.id, req.query)    
     .then( (result) => {
             res.send(result);    
         }
