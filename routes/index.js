@@ -84,6 +84,6 @@ router.patch('/menu/:id',    menu_controller.update )
 router.get('/menu/:id',    menu_controller.findOne )
 
 router.get('/pointvalues/:id',    point_values_controller.select )
-
+router.get('/pointvalue/:id',    point_values_controller.selectOne )
 
 module.exports =  router 

@@ -49,3 +49,15 @@ function CalcAggregateFunctions(id, start, end) {
     ]);
 }
 
+exports.selectOne = (id, query)=> {
+    if (query.current_time) {
+        //select values on time 
+           return db.findOne(PointValue, { 'point_id' : id, 'current_time' : moment.utc(query.current_time) }, 
+           'num_value str_value current_time str_current_time');        
+       } else {
+       //last
+           return db.findOne(PointValue, { 'point_id' : id }, 
+           'num_value str_value current_time str_current_time', 
+           { sort: { current_time: -1 } });        
+       }       
+}
