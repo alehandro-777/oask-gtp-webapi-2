@@ -8,6 +8,7 @@ const model = new Schema({
     label: { type: String, default: "label_text"},
     value: { type: String, default: "000.0"},
     type: { type: String, default: "text"},
+    hint: { type: String, default: "hint"},
     min: { type: String, default: "0"},
     max: { type: String, default: "100"},
     regex: { type: String, default: "regex_for_validation"},

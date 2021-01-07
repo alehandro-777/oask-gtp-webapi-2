@@ -12,4 +12,6 @@ const model = new Schema({
   created_at: { type: Date, default: Date.now }
 });
 
+model.index({ "point_id": 1, "current_time": 1}, { unique: true });    
+
 module.exports = mongoose.model('db_point_values', model); 

@@ -55,7 +55,8 @@ async function DecodeFormKVPtoPointValuesList(form_data) {
         }
         //date-time local
         if (form_data["3"]) {
-            current_time = new Date(form_data["3"]);    //set date
+            console.log(moment.utc(form_data["3"]).format())
+            current_time = moment.utc(form_data["3"]).format();    //set date
             str_current_time = form_data["3"];
             delete form_data["3"]; 
         }

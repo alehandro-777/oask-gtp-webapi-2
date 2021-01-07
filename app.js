@@ -12,7 +12,7 @@ const connString = config.get('dbConfig.connString');
 const test = require('./generate-test-data')
 
 
-const connParams = {useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false };
+const connParams = {useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true };
 
 mongoose.connect(connString, connParams);
 
@@ -24,8 +24,6 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.once('open', () => { 
     console.log('Mongobd connected Ok')
-    //DELETE DATABASE FOR TESTS !!!!!!!!!!!!!!!
-    //mongoose.connection.db.dropDatabase();
 }); 
 
 process.on('exit', ()=>{
@@ -45,12 +43,13 @@ process.env. RSA_PRIVATE_KEY = fs.readFileSync('./keys/private.key');
 const app = express()
 const router = require('./routes')
 
-app.use(bodyParser.urlencoded({extended:true}));
+//app.use(bodyParser.urlencoded({extended:true}));
 
 app.use(cors());
 
-// parse requests of content-type - application/json
-app.use(bodyParser.json());
+// parse various different custom JSON types as JSON
+app.use(bodyParser.json())
+
 app.use('', router)
 
 app.use('/', express.static(__dirname ));
@@ -62,9 +61,6 @@ app.use('/images', express.static(__dirname + '/images'));
 // global error handler
 app.use(errorHandler);
 
-//console.log(process.env.PORT)
-
-//test.GenerateTestData()
 
 console.log(`Server started at port: ${port}`)
 app.listen(port)

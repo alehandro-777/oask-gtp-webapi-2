@@ -6,6 +6,7 @@ const model = new Schema({
   name: { type: String, default: "for Label"},
   short_name: { type: String, default: "for table"},
   full_name: { type: String, default: "for search"},
+  eu: { type: String, default: "eng units"},
   min: { type: String, default: 0},
   max: { type: String, default: 100},
   control_id: { type: Number, ref: 'form_controls' },   
