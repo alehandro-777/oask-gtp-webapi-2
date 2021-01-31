@@ -19,6 +19,7 @@ const authorize = require('./auth')
 // middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
   console.log('Incoming request Time: ', Date.now())
+  //console.log(res)
   next()
 })
 

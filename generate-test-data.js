@@ -7,11 +7,11 @@ const Control = require('./forms/control/form-control.model')
 const Menu = require('./menu/forms_menu/forms-menu-model')
 
 exports.GenerateTestData = () => {
-    GenerateTestUsers()
-    GenerateTestControls() 
+    //GenerateTestUsers()
+    //GenerateTestControls() 
     GenerateTestPoints()
-    GenerateTestForms()
-    GenerateTestMenu()
+    //GenerateTestForms()
+    //GenerateTestMenu()
 }
 
 function GenerateTestUsers() {
@@ -291,7 +291,18 @@ function GenerateTestPoints() {
         { "_id": 173,"full_name":"Стрийське ВУПЗГ.ПСГ Угерське.К-сть свердловин", "name": "ПСГ Угерське.К-сть свердловин", "short_name" :"с.роб","eu": "од", "min":"0", "max":"63", "control_id":7},
         { "_id": 131,"full_name":"Стрийське ВУПЗГ.ПСГ Угерське.Р ВОГ", "name": "ПСГ Угерське.Р ВОГ", "short_name" :"Р","eu": "кгс/см2", "min":"0", "max":"100", "control_id":7},
         { "_id": 187,"full_name":"Стрийське ВУПЗГ.ПСГ Угерське.Стан ПСГ", "name": "ПСГ Угерське.Стан ПСГ", "short_name" :"стан","eu": "", "min":"0", "max":"2", "control_id":9},
-                               
+        { "_id": 209,"full_name":"Мринське ВУПЗГ.ПСГ Мринське.Qвтв ВОГ", "name": "ПСГ Мринське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 210,"full_name":"Мринське ВУПЗГ.ПСГ Солоха.Qвтв ВОГ", "name": "ПСГ Солоха.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 211,"full_name":"Мринське ВУПЗГ.ПСГ Олишівка.Qвтв ВОГ", "name": "ПСГ Олишівка.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 212,"full_name":"Богородчанське ВУПЗГ.ПСГ Богородчани.Qвтв ВОГ", "name": "ПСГ Богородчани.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 213,"full_name":"Опарське ВУПЗГ.ПСГ Опарське.Qвтв ВОГ", "name": "ПСГ Опарське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 214,"full_name":"Дашавське ВУПЗГ.ПСГ Дашавське.Qвтв ВОГ", "name": "ПСГ Дашавське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 215,"full_name":"Стрийське ВУПЗГ.ПСГ Угерське.Qвтв ВОГ", "name": "ПСГ Угерське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 216,"full_name":"Стрийське ВУПЗГ.ПСГ Більче-Волиця.Qвтв ВОГ", "name": "ПСГ Більче-Волиця.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 217,"full_name":"Пролетарське ВУПЗГ.ПСГ Пролетарське.Qвтв ВОГ", "name": "ПСГ Пролетарське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 218,"full_name":"Пролетарське ВУПЗГ.ПСГ Кегичівське.Qвтв ВОГ", "name": "ПСГ Кегичівське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+        { "_id": 219,"full_name":"Пролетарське ВУПЗГ.ПСГ Краснопопівське.Qвтв ВОГ", "name": "ПСГ Краснопопівське.Qвтв ВОГ", "short_name" :"Qвтв","eu": "тис.м3", "min":"0", "max":"3000", "control_id":7},
+                                   
 
         
     ]

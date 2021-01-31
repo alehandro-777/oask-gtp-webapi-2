@@ -19,11 +19,7 @@ mongoose.connection.on('error', (err) => {
 mongoose.connection.once('open', () => { 
     console.log('Mongobd connected Ok')
     
-    mongoose.connection.db.dropDatabase( (err, result) => {
-        console.log("Database delete Ok")
-        test.GenerateTestData()
-    });
-    
+    test.GenerateTestData()   
     
 }); 
 
@@ -38,11 +34,11 @@ process.on('SIGINT', ()=>{
     process.exit(1)
 });
 
-
 const StartUpdate = async () => {
     console.log("wait 1 sec")
     timer = setTimeout(() => StartUpdate(), 1000)
   };
+
 
 StartUpdate();
 
